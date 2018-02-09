@@ -6,16 +6,15 @@ import re
 import string
 import time
 import os
-try:
-    from urlparse import parse_qs
-except ImportError:
-    from urllib.parse import parse_qs
+#try:
+#    from urlparse import parse_qs
+#except ImportError:
+#    from urllib.parse import parse_qs
+from urllib import parse
 
 import pytest
 import pytz
 from betamax import Betamax, BaseMatcher
-from requests.compat import urlparse
-from shams import primitives
 
 from salesforce.rest.exceptions import InvalidCallException
 from ..conftest import (
@@ -32,21 +31,21 @@ class SalesforceRestMatcher(BaseMatcher):
     excluded_query_keys = ('start', 'end')
 
     def to_dict(self, query):
-        query_dict = parse_qs(query or '')  # Protect against None
+        query_dict = parse.parse_qs(query or '')  # Protect against None
         return dict(filter(lambda i: i[0] not in self.excluded_query_keys,
                            query_dict.items()))
 
     def match(self, request, recorded_request):
-        request_query = self.to_dict(urlparse(request.url).query)
+        request_query = self.to_dict(parse.urlparse(request.url).query)
         recorded_query = self.to_dict(
-            urlparse(recorded_request['uri']).query
+            parse.urlparse(recorded_request['uri']).query
         )
 
         return request_query == recorded_query
 
 Betamax.register_request_matcher(SalesforceRestMatcher)
 
-custom_object_name = primitives.capital_word(charset=string.lowercase)
+custom_object_name = "ItDoesntMatter"
 
 with Betamax.configure() as config:
     config.define_cassette_placeholder('__CUSTOM_OBJECT_NAME__',

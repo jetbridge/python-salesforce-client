@@ -2,7 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import logging
-import urlparse
+from urllib import parse
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +131,7 @@ class SalesforceSoapClientBase(object):
         response = client.service.login(username, password + token)
         return (
             response.sessionId,
-            urlparse.urlparse(response.serverUrl).netloc,
+            parse.urlparse(response.serverUrl).netloc,
         )
 
     def _set_session_header(self, access_token):

@@ -4,7 +4,6 @@ from __future__ import absolute_import, unicode_literals
 import logging
 import os.path
 import urllib
-import urlparse
 from xml.etree import ElementTree
 
 import pytz
@@ -86,11 +85,11 @@ class SalesforceRestClientBase(object):
             path_parts.append('v{0}'.format(self.version))
         path_parts.append(path)
 
-        url = urlparse.urljoin('https://{0}'.format(self.domain),
+        url = urllib.parse.urljoin('https://{0}'.format(self.domain),
                                os.path.join(*path_parts))
 
         if params:
-            url += '?{0}'.format(urllib.urlencode(params))
+            url += '?{0}'.format(urllib.parse.urlencode(params))
         return url
 
     def _extract_response(self, response):
